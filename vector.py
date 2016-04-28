@@ -1,4 +1,5 @@
 class Vector(object):
+    # Create a vector
     def __init__(self, coordinates):
         try:
             if not coordinates:
@@ -12,10 +13,10 @@ class Vector(object):
         except TypeError:
             raise TypeError('The coordinates must be an iterable')
 
-
+    #Print the vector
     def __str__(self):
         return 'Vector: {}'.format(self.coordinates)
 
-
+    #Check if 2 vectors are equal
     def __eq__(self, v):
         return self.coordinates == v.coordinates
