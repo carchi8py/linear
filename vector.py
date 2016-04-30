@@ -64,13 +64,17 @@ class Vector(object):
         """
         return sum([x*y for x,y in zip(self.coordinates, v.coordinates)])
     def angle_with(self, v, in_degrees=False):
-        print 'hi'
         try:
+            print 'hi'
             u1 = self.normalized()
-            print u1
             u2 = v.normalized()
-            print u2
-            angle_in_radians = acos(u1.dot(u2))
+            #Sometime we sould get just slight over 1, or under 1. this prevent that
+            temp = u1.dot(u2)
+            if temp > 1.0:
+                temp = Decimal('1.0')
+            if temp < -1.0:
+                temp = Decimal('-1.0')
+            angle_in_radians = acos(temp)
 
             if in_degrees:
                 degrees_per_radians = 180. / pi
@@ -82,6 +86,14 @@ class Vector(object):
                 raise Exception('Cannot compute an angle with the zero vector')
             else:
                 raise e
+    def is_orthogonal_to(self, v, tolerance=1e-10):
+        return abs(self.dot(v)) < tolerance
+
+    def is_parallel_to(self, v):
+        return ( self.is_zero() or v.is_zero() or self.angle_with(v) == 0 or self.angle_with(v) == pi)
+
+    def is_zero(self, tolerance=1e-10):
+        return self.magnitude() < tolerance
 
     #Print the vector
     def __str__(self):
