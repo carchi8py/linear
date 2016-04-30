@@ -6,6 +6,8 @@ getcontext().prec = 30
 class Vector(object):
 
     CANNOT_NORMALIZE_ZERO_VECTOR_MSG = 'Cannot normalize the zero vector'
+    NO_UNIQUE_PARALLEL = "There is no Unique Parallel"
+    NO_UNIQUE_ORTHOGONAL = "There is no unique Orthogonal"
 
     # Create a vector
     def __init__(self, coordinates):
@@ -65,7 +67,6 @@ class Vector(object):
         return sum([x*y for x,y in zip(self.coordinates, v.coordinates)])
     def angle_with(self, v, in_degrees=False):
         try:
-            print 'hi'
             u1 = self.normalized()
             u2 = v.normalized()
             #Sometime we sould get just slight over 1, or under 1. this prevent that
@@ -94,6 +95,28 @@ class Vector(object):
 
     def is_zero(self, tolerance=1e-10):
         return self.magnitude() < tolerance
+
+    def component_orthogonal_to(self, basis):
+        try:
+            projection = self.component_parallel_to(basis)
+            return self.minus(projection)
+
+        except Exception as e:
+            if str(e) == self. NO_UNIQUE_PARALLEL:
+                raise Exception(self.NO_UNIQUE_ORTHOGONAL)
+            else:
+                raise e
+    def component_parallel_to(self, basis):
+        try:
+            u = basis.normalized()
+            weight = self.dot(u)
+            return u.times_scalar(weight)
+        except Exception as e:
+            if str(e) == self.CANNOT_NORMALIZE_ZERO_VECTOR_MSG:
+                raise Exception(self.NO_UNIQUE_PARALLEL)
+            else:
+                raise e
+
 
     #Print the vector
     def __str__(self):
